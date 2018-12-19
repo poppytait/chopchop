@@ -10,11 +10,7 @@ const nutritentSchema = {
 }
 
 const recipeSchema = new Schema({
-    _userId: {
-        type: ObjectID,
-        ref: 'User'
-    },
-
+    uri: String,
     label: String,
     image: String,
     url: String,
