@@ -34,19 +34,33 @@ router.post('/', isLoggedIn(), (req, res, next) => {
         .catch(error => {
             next(error);
         })
-
-
 })
 
 router.get('/', isLoggedIn(), (req, res, next) => {
     let userID = req.session.currentUser._id;
     User.findById(userID)
-        .then(user => {
-            return user.favourites;
-        })
+        .populate('favourites')
         .then(favourites => {
             res.status(200)
             res.json(favourites);
+        })
+        .catch(error => {
+            next(error);
+        })
+})
+
+router.delete('/:recipeID', isLoggedIn(), (req, res, next) => {
+    const recipeID = req.params.recipeID;
+    const userID = req.session.currentUser._id;
+    User.findById(userID)
+        .then(user => {
+            let favs = user.favourites;
+            user.favourites = favs.filter(favourite => String(favourite) !== recipeID)
+            return user.save()
+        })
+        .then(response => {
+            res.status(200)
+            res.json(response);
         })
         .catch(error => {
             next(error);
